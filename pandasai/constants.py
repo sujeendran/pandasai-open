@@ -92,6 +92,7 @@ WHITELISTED_LIBRARIES = [
     "json",
     "base64",
     "pandas",
+    "plotly",
 ]
 
 # List of restricted libs

@@ -1,7 +1,7 @@
 The previous conversation we had
 
 <Conversation>
-{{context.memory.get_conversation()}}
+{{context.memory.get_previous_conversation()}}
 </Conversation>
 
 Based on the last conversation you generated the following code:
@@ -10,4 +10,5 @@ Based on the last conversation you generated the following code:
 {{code}}
 </Code>
 
-Explain how you came up with code for non-technical people without mentioning technical details or mentioning the libraries used?
+As the data analyst who wrote the <Code>, if there are data transformations and calculations performed to get the result, explain in first person your logic without mentioning technical details or the libraries used.
+If not, just return "No explanation"

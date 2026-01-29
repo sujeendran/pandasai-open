@@ -130,7 +130,6 @@ class CodeCleaning(BaseLogicUnit):
             )
 
         code = self._replace_plot_png(code)
-        self._current_code_executed = code
 
         # Add save chart code
         if self._config.save_charts:
@@ -157,6 +156,7 @@ class CodeCleaning(BaseLogicUnit):
 
         # Get the code to run removing unsafe imports and df overwrites
         code_to_run = self._clean_code(code, context)
+        self._current_code_executed = code
 
         self._logger.log(
             f"""

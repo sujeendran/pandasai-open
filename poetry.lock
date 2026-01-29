@@ -4080,10 +4080,9 @@ referencing = ">=0.31.0"
 name = "kaleido"
 version = "0.2.0"
 description = "Static image export for web-based visualization libraries with zero dependencies"
-optional = true
+optional = false
 python-versions = "*"
 groups = ["main"]
-markers = "extra == \"plotly\""
 files = [
     {file = "kaleido-0.2.0-py2.py3-none-macosx_10_11_x86_64.whl", hash = "sha256:73f46490168f9af7aac3b01035ad8851457e5b0088bc61425ae3c56bf0968065"},
     {file = "kaleido-0.2.0-py2.py3-none-macosx_11_0_arm64.whl", hash = "sha256:3af187bf6cc2b3af61f5737bf1b10f4ea75ba53391ae20e6df96784f6ca0a9a1"},
@@ -6986,10 +6985,9 @@ type = ["mypy (>=1.18.2)"]
 name = "plotly"
 version = "5.24.1"
 description = "An open-source, interactive data visualization library for Python"
-optional = true
+optional = false
 python-versions = ">=3.8"
 groups = ["main"]
-markers = "extra == \"plotly\""
 files = [
     {file = "plotly-5.24.1-py3-none-any.whl", hash = "sha256:f67073a1e637eb0dc3e46324d9d51e2fe76e9727c892dde64ddf1e1b51f29089"},
     {file = "plotly-5.24.1.tar.gz", hash = "sha256:dbc8ac8339d248a4bcc36e08a5659bacfe1b079390b8953533f4eb22169b4bae"},
@@ -10271,10 +10269,9 @@ widechars = ["wcwidth"]
 name = "tenacity"
 version = "8.5.0"
 description = "Retry code until it succeeds"
-optional = true
+optional = false
 python-versions = ">=3.8"
 groups = ["main"]
-markers = "extra == \"google-ai\" or extra == \"langchain\" or extra == \"plotly\" or extra == \"streamlit\" or extra == \"chromadb\""
 files = [
     {file = "tenacity-8.5.0-py3-none-any.whl", hash = "sha256:b594c2a5945830c267ce6b79a166228323ed52718f30302c1359836112346687"},
     {file = "tenacity-8.5.0.tar.gz", hash = "sha256:8bc6c0c8a09b31e6cad13c47afbed1a567518250a9a171418582ed8d9c20ca78"},
@@ -11885,7 +11882,6 @@ milvus = ["milvus-model", "pymilvus"]
 modin = ["modin"]
 numpy = ["numpy"]
 pinecone = ["pinecone-client"]
-plotly = ["kaleido", "plotly"]
 polars = ["polars"]
 qdrant = ["qdrant-client"]
 scikit-learn = ["scikit-learn"]
@@ -11899,4 +11895,4 @@ yfinance = ["yfinance"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.9,<3.9.7 || >3.9.7,<3.11"
-content-hash = "131df19e0076be72fa7ca0f63cbd87f7a3c0f822313bb182c71e45a9bf88660d"
+content-hash = "36599c306d5c4cc021d86d3b553df4ef27a325ef5c14217c372a9b84daca09a7"

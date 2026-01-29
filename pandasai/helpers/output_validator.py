@@ -5,6 +5,8 @@ import numpy as np
 
 import pandasai.pandas as pd
 from pandasai.exceptions import InvalidOutputValueMismatch
+from plotly.graph_objects import Figure as pxFigure
+from matplotlib.figure import Figure
 
 
 class OutputValidator:
@@ -58,14 +60,14 @@ class OutputValidator:
         elif expected_type == "dataframe":
             return isinstance(self, (pd.DataFrame, pd.Series, dict))
         elif expected_type == "plot":
-            if not isinstance(self, (str, dict)):
+            if not isinstance(self, (str, dict, Figure, pxFigure)):
                 return False
 
-            if isinstance(self, dict):
-                return True
+            if isinstance(self, str):
+                path_to_plot_pattern = r"^(\/[\w.-]+)+(/[\w.-]+)*$|^[^\s/]+(/[\w.-]+)*$"
+                return bool(re.match(path_to_plot_pattern, self))
 
-            path_to_plot_pattern = r"^(\/[\w.-]+)+(/[\w.-]+)*$|^[^\s/]+(/[\w.-]+)*$"
-            return bool(re.match(path_to_plot_pattern, self))
+            return True
 
     @staticmethod
     def validate_result(result: dict) -> bool:
@@ -82,9 +84,12 @@ class OutputValidator:
         elif result["type"] == "string":
             return isinstance(result["value"], str)
         elif result["type"] == "dataframe":
-            return isinstance(result["value"], (pd.DataFrame, pd.Series, dict))
+            return isinstance(result["value"], (pd.DataFrame, pd.Series))
         elif result["type"] == "plot":
             if "plotly" in repr(type(result["value"])):
+                return True
+
+            if isinstance(result["value"], (Figure, pxFigure)):
                 return True
 
             if not isinstance(result["value"], (str, dict)):
