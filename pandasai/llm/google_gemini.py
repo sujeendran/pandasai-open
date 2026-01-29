@@ -24,16 +24,27 @@ class GoogleGemini(BaseGoogle):
 
     """
 
-    model: str = "models/gemini-pro"
+    _supported_generative_models = [
+        "gemini-flash-latest",
+        "gemini-flash-lite-latest",
+        "gemini-2.5-flash",
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-pro",
+        "gemini-3.0-flash-preview",
+        "gemini-3.0-pro-preview",
+    ]
     google_gemini: Any
 
-    def __init__(self, api_key: str, **kwargs):
+    def __init__(self, api_key: str, model: Optional[str] = None, **kwargs):
         """
         __init__ method of GoogleGemini Class
         Args:
             api_key (str): API Key
             **kwargs: Extended Parameters inferred from BaseGoogle Class
         """
+        self.model = model or "gemini-flash-latest"
+        if self.model not in self._supported_generative_models:
+            raise ValueError(f"Model {self.model} is not supported.")
         self._configure(api_key=api_key)
         self._set_params(**kwargs)
 

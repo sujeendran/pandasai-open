@@ -42,7 +42,13 @@ class GoogleVertexAI(BaseGoogle):
         "text-unicorn@001",
     ]
     _supported_generative_models = [
-        "gemini-pro",
+        "gemini-flash-latest",
+        "gemini-flash-lite-latest",
+        "gemini-2.5-flash",
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-pro",
+        "gemini-3.0-flash-preview",
+        "gemini-3.0-pro-preview",
     ]
     _supported_code_chat_models = ["codechat-bison@001", "codechat-bison@002"]
 
@@ -59,7 +65,7 @@ class GoogleVertexAI(BaseGoogle):
             **kwargs: Arguments to control the Model Parameters
         """
 
-        self.model = model or "text-bison@001"
+        self.model = model or "gemini-flash-latest"
 
         self._configure(project_id, location)
         self.project_id = project_id
