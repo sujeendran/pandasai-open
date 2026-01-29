@@ -10,7 +10,7 @@ from pandasai.llm import GoogleGemini
 df = pd.read_csv("examples/data/Loan payments data.csv")
 
 # Set the path of your json credentials
-llm = GoogleGemini(api_key=os.getenv("GEMINI_API_KEY"))
+llm = GoogleGemini(api_key=os.getenv("GEMINI_API_KEY"), model="gemini-3-flash-preview")
 agent = Agent(df, config={"llm": llm})
 response = agent.chat("How many loans are from men and have been paid off?")
 print(response)

@@ -7,7 +7,7 @@ https://ai.google.dev/docs/gemini_api_overview.
 Example:
     Use below example to call GoogleGemini Model
 
-    >>> from pandasai.llm.google_gemini import GoogleGemini
+    >>> from pandasai.llm import GoogleGemini
 """
 from typing import Any, Optional
 
@@ -30,8 +30,8 @@ class GoogleGemini(BaseGoogle):
         "gemini-2.5-flash",
         "gemini-2.5-flash-lite",
         "gemini-2.5-pro",
-        "gemini-3.0-flash-preview",
-        "gemini-3.0-pro-preview",
+        "gemini-3-flash-preview",
+        "gemini-3-pro-preview",
     ]
     google_gemini: Any
 
@@ -61,12 +61,10 @@ class GoogleGemini(BaseGoogle):
         if not api_key:
             raise APIKeyNotFoundError("Google Gemini API key is required")
 
-        err_msg = "Install google-generativeai >= 0.3 for Google Gemini API"
-        self.google_gemini = import_dependency("google.generativeai", extra=err_msg)
+        err_msg = "Install google-genai >= 1.0 for Google Gemini API"
+        genai_module = import_dependency("google.genai", extra=err_msg)
 
-        self.google_gemini.configure(api_key=api_key)
-        final_model = self.google_gemini.GenerativeModel(self.model)
-        self.google_gemini = final_model
+        self.client = genai_module.Client(api_key=api_key)
 
     def _valid_params(self):
         """Returns if the Parameters are valid or Not"""
@@ -98,16 +96,15 @@ class GoogleGemini(BaseGoogle):
         updated_prompt = self.prepend_system_prompt(prompt, memory)
 
         self.last_prompt = updated_prompt
-        completion = self.google_gemini.generate_content(
+        completion = self.client.models.generate_content(
+            model=self.model,
             contents=prompt,
-            generation_config=dict(
-                {
-                    "temperature": self.temperature,
-                    "top_p": self.top_p,
-                    "top_k": self.top_k,
-                    "max_output_tokens": self.max_output_tokens,
-                }
-            ),
+            config={
+                "temperature": self.temperature,
+                "top_p": self.top_p,
+                "top_k": self.top_k,
+                "max_output_tokens": self.max_output_tokens,
+            },
         )
 
         return completion.text

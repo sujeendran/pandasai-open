@@ -7,7 +7,7 @@ https://cloud.google.com/vertex-ai/docs/generative-ai/learn/generative-ai-studio
 Example:
     Use below example to call Google VertexAI
 
-    >>> from pandasai.llm.google_palm import GoogleVertexAI
+    >>> from pandasai.llm import GoogleVertexAI
 
 """
 from typing import Optional
@@ -20,37 +20,21 @@ from .base import BaseGoogle
 
 
 class GoogleVertexAI(BaseGoogle):
-    """Google Palm Vertexai LLM
-    BaseGoogle class is extended for Google Palm model using Vertexai.
-    The default model support at the moment is text-bison-001.
-    However, user can choose to use code-bison-001 too.
+    """Google Vertexai LLM
+    BaseGoogle class is extended for Google Vertexai model.
+    The default model support at the moment is gemini-flash-latest.
+    However, user can choose to use any other model from the list.
     """
 
-    _supported_code_models = [
-        "code-bison",
-        "code-bison-32k",
-        "code-bison-32k@002",
-        "code-bison@001",
-        "code-bison@002",
-    ]
-    _supported_text_models = [
-        "text-bison",
-        "text-bison-32k",
-        "text-bison-32k@002",
-        "text-bison@001",
-        "text-bison@002",
-        "text-unicorn@001",
-    ]
     _supported_generative_models = [
         "gemini-flash-latest",
         "gemini-flash-lite-latest",
         "gemini-2.5-flash",
         "gemini-2.5-flash-lite",
         "gemini-2.5-pro",
-        "gemini-3.0-flash-preview",
-        "gemini-3.0-pro-preview",
+        "gemini-3-flash-preview",
+        "gemini-3-pro-preview",
     ]
-    _supported_code_chat_models = ["codechat-bison@001", "codechat-bison@002"]
 
     def __init__(
         self, project_id: str, location: str, model: Optional[str] = None, **kwargs
@@ -61,7 +45,7 @@ class GoogleVertexAI(BaseGoogle):
         Args:
             project_id (str): GCP project
             location (str): GCP project Location
-            model Optional (str): Model to use Default to text-bison@001
+            model Optional (str): Model to use Default to gemini-flash-latest
             **kwargs: Arguments to control the Model Parameters
         """
 
@@ -85,10 +69,11 @@ class GoogleVertexAI(BaseGoogle):
 
         """
 
-        err_msg = "Install google-cloud-aiplatform for Google Vertexai"
-        vertexai = import_dependency("vertexai", extra=err_msg)
-        vertexai.init(project=project_id, location=location)
-        self.vertexai = vertexai
+        err_msg = "Install google-genai >= 1.0 for Google Vertexai"
+        genai_module = import_dependency("google.genai", extra=err_msg)
+        self.client = genai_module.Client(
+            vertexai=True, project=project_id, location=location
+        )
 
     def _valid_params(self):
         """Returns if the Parameters are valid or Not"""
@@ -122,70 +107,35 @@ class GoogleVertexAI(BaseGoogle):
 
         self.last_prompt = updated_prompt
 
-        if self.model in self._supported_code_models:
-            from vertexai.preview.language_models import CodeGenerationModel
-
-            code_generation = CodeGenerationModel.from_pretrained(self.model)
-
-            completion = code_generation.predict(
-                prefix=prompt,
-                temperature=self.temperature,
-                max_output_tokens=self.max_output_tokens,
-            )
-        elif self.model in self._supported_text_models:
-            from vertexai.preview.language_models import TextGenerationModel
-
-            text_generation = TextGenerationModel.from_pretrained(self.model)
-
-            completion = text_generation.predict(
-                prompt=updated_prompt,
-                temperature=self.temperature,
-                top_p=self.top_p,
-                top_k=self.top_k,
-                max_output_tokens=self.max_output_tokens,
-            )
-        elif self.model in self._supported_generative_models:
-            from vertexai.preview.generative_models import GenerativeModel
-
-            model = GenerativeModel(self.model)
-
-            responses = model.generate_content(
-                [updated_prompt],
-                generation_config={
+        if self.model in self._supported_generative_models:
+            completion = self.client.models.generate_content(
+                model=self.model,
+                contents=updated_prompt,
+                config={
                     "max_output_tokens": self.max_output_tokens,
                     "temperature": self.temperature,
                     "top_p": self.top_p,
                     "top_k": self.top_k,
                 },
             )
+            return completion.text
 
-            completion = responses.candidates[0].content.parts[0]
         elif self.model in self._supported_code_chat_models:
-            from vertexai.language_models import ChatMessage, CodeChatModel
-
-            code_chat_model = CodeChatModel.from_pretrained(self.model)
-            messages = []
-
-            for message in memory.all():
-                if message["is_user"]:
-                    messages.append(
-                        ChatMessage(author="user", content=message["message"])
-                    )
-                else:
-                    messages.append(
-                        ChatMessage(author="model", content=message["message"])
-                    )
-            chat = code_chat_model.start_chat(
-                context=memory.get_system_prompt(), message_history=messages
+            # Note: For simplicity and consistency with the new SDK,
+            # we use generate_content even for chat models as it's the standard.
+            # If specific 'chat' features are needed, they can be added later.
+            completion = self.client.models.generate_content(
+                model=self.model,
+                contents=updated_prompt,
+                config={
+                    "max_output_tokens": self.max_output_tokens,
+                    "temperature": self.temperature,
+                },
             )
-
-            response = chat.send_message(prompt)
-            return response.text
+            return completion.text
 
         else:
             raise UnsupportedModelError(self.model)
-
-        return completion.text
 
     @property
     def type(self) -> str:

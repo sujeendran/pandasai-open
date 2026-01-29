@@ -129,31 +129,31 @@ with get_openai_callback() as cb:
 # Total Cost (USD): $ 0.000750
 ```
 
-## Google PaLM
+## Google Gemini
 
-In order to use Google PaLM models, you need to have a Google Cloud API key. You can get
+In order to use Google Gemini models, you need to have a Google Cloud API key. You can get
 one [here](https://developers.generativeai.google/tutorials/setup).
 
-Once you have an API key, you can use it to instantiate a Google PaLM object:
+Once you have an API key, you can use it to instantiate a Google Gemini object:
 
 ```python
 from pandasai import SmartDataframe
-from pandasai.llm import GooglePalm
+from pandasai.llm import GoogleGemini
 
-llm = GooglePalm(api_key="my-google-cloud-api-key")
+llm = GoogleGemini(api_key="GEMINI_API_KEY")
 df = SmartDataframe("data.csv", config={"llm": llm})
 ```
 
 ## Google Vertexai
 
-In order to use Google PaLM models through Vertexai api, you need to have
+In order to use Google Vertexai models, you need to have
 
 1. Google Cloud Project
 2. Region of Project Set up
 3. Install optional dependency `google-cloud-aiplatform `
 4. Authentication of `gcloud`
 
-Once you have basic setup, you can use it to instantiate a Google PaLM through vertex ai:
+Once you have basic setup, you can use it to instantiate a Google Vertexai model:
 
 ```python
 from pandasai import SmartDataframe
@@ -161,7 +161,7 @@ from pandasai.llm import GoogleVertexAI
 
 llm = GoogleVertexAI(project_id="generative-ai-training",
                      location="us-central1",
-                     model="text-bison@001")
+                     model="gemini-flash-latest")
 df = SmartDataframe("data.csv", config={"llm": llm})
 ```
 

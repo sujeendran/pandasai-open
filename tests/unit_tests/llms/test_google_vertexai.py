@@ -2,6 +2,7 @@
 
 import pytest
 
+from unittest.mock import MagicMock, patch
 from pandasai.exceptions import UnsupportedModelError
 from pandasai.llm import GoogleVertexAI
 
@@ -17,7 +18,7 @@ class TestGoogleVertexAI:
         location = "northamerica-northeast1"
         vertexai_instance = GoogleVertexAI(project_id, location)
 
-        assert vertexai_instance.model == "text-bison@001"
+        assert vertexai_instance.model == "gemini-flash-latest"
         assert vertexai_instance.project_id == project_id
         assert vertexai_instance.location == location
 
@@ -63,3 +64,20 @@ class TestGoogleVertexAI:
     def test_validate_with_code_chat_model(self, google_vertexai: GoogleVertexAI):
         google_vertexai.model = "codechat-bison@001"
         google_vertexai._validate()
+
+    def test_text_generation(self, mocker):
+        project_id = "test-project"
+        location = "us-central1"
+        llm = GoogleVertexAI(project_id, location)
+        expected_text = "Generated result"
+        
+        mock_response = MagicMock()
+        mock_response.text = expected_text
+        
+        mock_client = MagicMock()
+        mock_client.models.generate_content.return_value = mock_response
+        
+        with patch("google.genai.Client", return_value=mock_client):
+            llm._configure(project_id, location)
+            result = llm._generate_text("Hi")
+            assert result == expected_text

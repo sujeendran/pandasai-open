@@ -1,7 +1,7 @@
 """ Base class to implement a new LLM
 
 This module is the base class to integrate the various LLMs API. This module also
-includes the Base LLM classes for OpenAI and Google PaLM.
+includes the Base LLM classes for OpenAI and Google VertexAI.
 
 Example:
 
