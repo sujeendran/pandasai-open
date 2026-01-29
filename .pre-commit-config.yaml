@@ -4,10 +4,8 @@ repos:
     hooks:
       - id: ruff
         name: ruff
-        stages: [manual]
       - id: ruff-format
         name: ruff-format
-        stages: [manual]
   - repo: local
     hooks:
       - id: pytest-check
@@ -16,14 +14,12 @@ repos:
         language: system
         pass_filenames: false
         always_run: true
-        stages: [manual]
 
   - repo: https://github.com/sourcery-ai/sourcery
-    rev: v1.24.0
+    rev: v1.11.0
     hooks:
       - id: sourcery
         # The best way to use Sourcery in a pre-commit hook:
         # * review only changed lines:
         # * omit the summary
         args: [--diff=git diff HEAD, --no-summary]
-        stages: [manual]
