@@ -11,7 +11,7 @@ from pandasai.responses.response_serializer import ResponseSerializer
 from ...exceptions import NoResultFoundError
 from ...helpers.logger import Logger
 from ...helpers.node_visitors import AssignmentVisitor, CallVisitor
-from ...helpers.optional import get_environment
+from ...helpers.optional import get_environment, import_dependency
 from ...helpers.output_validator import OutputValidator
 from ...schemas.df_config import Config
 from ..base_logic_unit import BaseLogicUnit
@@ -160,6 +160,13 @@ class CodeExecution(BaseLogicUnit):
         environment["dfs"] = self._get_originals(dfs)
         if len(environment["dfs"]) == 1:
             environment["df"] = environment["dfs"][0]
+
+        if (
+            getattr(self._config, "data_viz_library", None) == "plotly"
+            or self.context.get("data_viz_library") == "plotly"
+        ):
+            environment["px"] = import_dependency("plotly.express", errors="ignore")
+            environment["go"] = import_dependency("plotly.graph_objects", errors="ignore")
 
         if self._config.direct_sql:
             environment["execute_sql_query"] = self._dfs[0].execute_direct_sql_query
