@@ -68,11 +68,6 @@ class GenerateChatPipeline:
                     on_execution=on_code_generation,
                 ),
                 CachePopulation(skip_if=self.is_cached),
-                CodeCleaning(
-                    skip_if=self.no_code,
-                    on_failure=self.on_code_cleaning_failure,
-                    on_retry=self.on_code_retry,
-                ),
             ],
         )
 
@@ -81,6 +76,11 @@ class GenerateChatPipeline:
             logger=logger,
             query_exec_tracker=self.query_exec_tracker,
             steps=[
+                CodeCleaning(
+                    skip_if=self.no_code,
+                    on_failure=self.on_code_cleaning_failure,
+                    on_retry=self.on_code_retry,
+                ),
                 CodeExecution(
                     before_execution=before_code_execution,
                     on_failure=self.on_code_execution_failure,
