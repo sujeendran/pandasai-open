@@ -58,7 +58,7 @@ class ResultParsing(BaseLogicUnit):
         if result is None:
             return
 
-        context.memory.add(context.intermediate_values["current_code_executed"], False)
+        context.memory.add(context.get("current_code_executed"), False)
         # if result["type"] in ["string", "number"]:
         #     context.memory.add(str(result["value"]), False)
         # elif result["type"] == "dataframe":
